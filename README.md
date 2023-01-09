@@ -1,16 +1,10 @@
- _                              _   __  __          _ _
-| |    __ _ _ __ __ ___   _____| | |  \/  | ___  __| (_) __ _
-| |   / _` | '__/ _` \ \ / / _ | | | |\/| |/ _ \/ _` | |/ _` |
-| |__| (_| | | | (_| |\ V |  __| | | |  | |  __| (_| | | (_| |
-|_____\__,_|_|  \__,_| \_/ \___|_| |_|  |_|\___|\__,_|_|\__,_|
+# Laravel Media
 
------------
-
-#Documentation
+### Documentation
 
 1. Installation:
     1. Provider
-        - 
+        - php arisan punlishing provider 
     2. Migrations
         - php artisan migrate
 2. Configuration
