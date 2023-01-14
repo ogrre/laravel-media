@@ -1,15 +1,40 @@
 <?php
 
 return [
+    'models' => [
 
-    'name' => 'media',
-    /*
-     * mime type
-    */
-    'mime_type' => ['png', 'jpg'],
+        /*
+         *
+         */
 
-    /*
-     * storage disk
-    */
-    'disk' => 'local'
+        'media' => Ogrre\Media\Models\Media::class,
+
+        /*
+         *
+         */
+
+        'media_file' => Ogrre\Media\Models\MediaFile::class,
+
+    ],
+
+    'attributs' => [
+
+        /*
+         * name
+        */
+
+        'name' => 'media',
+
+        /*
+         * mime type
+        */
+
+        'mime_type' => ['png', 'jpg'],
+
+        /*
+         * storage disk
+        */
+
+        'disk' => 'local'
+    ]
 ];

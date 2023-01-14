@@ -4,7 +4,13 @@
 
 1. Installation:
     1. Provider
-        - php arisan punlishing provider 
+        - in config/app.php
+            ``'providers' => [
+           // ...
+           Ogrre\Media\MediaServiceProvider::class,
+           ];``
+        - in terminal, publish migration and config file
+           ```php artisan vendor:publish --provider="Ogrre\Media\MediaServiceProvider```
     2. Migrations
         - php artisan migrate
 2. Configuration

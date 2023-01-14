@@ -5,6 +5,7 @@ namespace Ogrre\Media\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Ogrre\Media\Exceptions\MediaDoesNotExist;
 
 class Media extends Model
 {
@@ -28,7 +29,7 @@ class Media extends Model
     /**
      * @var string
      */
-    protected $table = 'media_types';
+    protected $table = 'medias';
 
     /**
      * @return HasMany
@@ -50,5 +51,31 @@ class Media extends Model
         $attributes['disk'] = $attributes['disk'] ?? config('media.disk');
 
         return static::query()->create($attributes);
+    }
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public static function findByName($name): mixed
+    {
+        $media_type = Media::where('name', $name)->first();
+
+        if (! $media_type) {
+            throw MediaDoesNotExist::named($name);
+        }
+
+        return $media_type;
+    }
+
+    public static function findById($id): mixed
+    {
+        $media_type = Media::find($id);
+
+        if (! $media_type) {
+            throw MediaDoesNotExist::withId($id);
+        }
+
+        return $media_type;
     }
 }

@@ -1,6 +1,6 @@
 {
     "name": "ogrre/laravel-media",
-    "description": "package to manage media easy in laravel",
+    "description": "Package to manage media easy in laravel",
     "type": "library",
     "require": {
         "php" : "^7.3|^8.0|^8.1",
@@ -9,6 +9,13 @@
     },
     "homepage": "https://github.com/ogrre/laravel-media",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Ogrre",
+            "homepage": "https://jbloup.dev",
+            "role": "Developer"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Ogrre\\Media\\": "src/"
