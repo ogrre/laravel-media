@@ -47,8 +47,8 @@ return new class extends Migration
                 ->on('medias')
                 ->onDelete('cascade');
 
-            $table->string('model_type');
-            $table->unsignedBigInteger('model_id');
+            $table->string('model_type')->nullable();
+            $table->unsignedBigInteger('model_id')->nullable();
         });
     }
 

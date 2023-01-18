@@ -17,7 +17,7 @@ trait HasMedia
 
     public function getMediaClass()
     {
-        if (! isset($this->mediaClass)) {
+        if (!isset($this->mediaClass)) {
             $this->mediaClass = app(MediaRegistrar::class)->getMediaClass();
         }
 
@@ -33,8 +33,8 @@ trait HasMedia
         $medias = collect($media_list)
             ->flatten()
             ->map(function ($media) {
-            return $this->getStoredMedia($media)->id;
-        });
+                return $this->getStoredMedia($media)->id;
+            });
 
         $this->medias()->syncWithoutDetaching($medias);
     }
@@ -58,13 +58,12 @@ trait HasMedia
 //            return "mime type pas bpn";
 //        }
 
-        $new_media_file = new MediaFile();
-        $new_media_file->file_name = $file->getClientOriginalName();
-        $new_media_file->path = Storage::url($path);
-        $new_media_file->size = $file->getSize();
-        $new_media_file->media_type_id = $media->id;
-
-        $this->media_files()->save($new_media_file);
+        $this->media_files()->save(MediaFile::create([
+            'file_name' => $file->getClientOriginalName(),
+            'path' => Storage::url($path),
+            'size' => $file->getSize(),
+            'media_id' => $media->id
+        ]));
     }
 
     /**
@@ -83,7 +82,7 @@ trait HasMedia
             return $mediaClass->findById($media);
         }
 
-        if (! $media instanceof Media) {
+        if (!$media instanceof Media) {
             throw MediaDoesNotExist::instanced($media);
         }
 
@@ -93,6 +92,19 @@ trait HasMedia
     public function hasMedia(Media $media_type): void
     {
         // return true if model has media
+    }
+
+
+
+    public function getMediaFile($media)
+    {
+        $media = $this->getStoredMedia($media);
+
+        //TODO has media ?
+
+        return $this->morphMany(MediaFile::class, 'model')
+            ->where('media_id', $media->id)
+            ->first();
     }
 
     /**
@@ -106,7 +118,7 @@ trait HasMedia
     /**
      * @return MorphMany
      */
-    public function media_files(): MorphMany
+    private function media_files(): MorphMany
     {
         return $this->morphMany(MediaFile::class, 'model');
     }

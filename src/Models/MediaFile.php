@@ -16,7 +16,9 @@ class MediaFile extends Model
         'file_name',
         'path',
         'size',
-        'media_type_id',
+        'media_id',
+        'model_type',
+        'model_id'
     ];
 
     /**
