@@ -52,6 +52,8 @@ trait HasMedia
 
         $this->hasMedia($media);
 
+        //TODO check if mediafile exist
+
         $path = Storage::disk($media->disk)->put($media->name, $file);
 
         $media->checkMimeType(MimeType::from($path));
