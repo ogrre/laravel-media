@@ -5,6 +5,9 @@ namespace Ogrre\Media\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Http\Testing\MimeType;
+use Ogrre\Media\Exceptions\FileMimeTypeDoesNotMatch;
 use Ogrre\Media\Exceptions\MediaDoesNotExist;
 
 class Media extends Model
@@ -77,5 +80,16 @@ class Media extends Model
         }
 
         return $media_type;
+    }
+
+    /**
+     * @param $mime_type
+     * @return void
+     */
+    public function checkMimeType($mime_type): void
+    {
+        if(!collect($this->mime_type)->contains($mime_type)){
+            throw FileMimeTypeDoesNotMatch::match($this->name, $mime_type);
+        }
     }
 }

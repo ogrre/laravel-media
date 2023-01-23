@@ -12,7 +12,7 @@ class MediaDoesNotExist extends InvalidArgumentException
      */
     public static function named(string $mediaName): static
     {
-        return new static("There is no media named `{$mediaName}`.");
+        return new static("There is no media named $mediaName.");
     }
 
     /**
@@ -21,7 +21,7 @@ class MediaDoesNotExist extends InvalidArgumentException
      */
     public static function withId(int $mediaId): static
     {
-        return new static("There is no media with id `{$mediaId}`.");
+        return new static("There is no media with id $mediaId.");
     }
 
     /**
@@ -30,6 +30,6 @@ class MediaDoesNotExist extends InvalidArgumentException
      */
     public static function instanced(mixed $media): static
     {
-        return new static("There is no media instanced `{$media}`.");
+        return new static("There is no media instanced $media.");
     }
 }

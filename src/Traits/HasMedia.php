@@ -2,11 +2,13 @@
 
 namespace Ogrre\Media\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Http\Testing\MimeType;
 use Illuminate\Support\Facades\Storage;
 use Ogrre\Media\Exceptions\MediaDoesNotExist;
+use Ogrre\Media\Exceptions\MediaDoesNotAssignedToThisModel;
 use Ogrre\Media\MediaRegistrar;
 use Ogrre\Media\Models\Media;
 use Ogrre\Media\Models\MediaFile;
@@ -41,22 +43,18 @@ trait HasMedia
 
     /**
      * @param $file
-     * @param string|null $media_type
+     * @param string|null $media_ref
      * @return void
      */
-    public function storeMediaFile($file, mixed $media_type): void
+    public function storeMediaFile($file, mixed $media_ref): void
     {
-        $media = $this->getStoredMedia($media_type);
+        $media = $this->getStoredMedia($media_ref);
 
-        //TODO model has media ?
+        $this->hasMedia($media);
 
         $path = Storage::disk($media->disk)->put($media->name, $file);
 
-        //TODO file mime_type == media mime_type ?
-//        if($media->mime_type != MimeType::from($path)){
-//
-//            return "mime type pas bpn";
-//        }
+        $media->checkMimeType(MimeType::from($path));
 
         $this->media_files()->save(MediaFile::create([
             'file_name' => $file->getClientOriginalName(),
@@ -89,18 +87,26 @@ trait HasMedia
         return $media;
     }
 
-    public function hasMedia(Media $media_type): void
+    /**
+     * @param Media $media
+     * @return void
+     */
+    public function hasMedia(Media $media): void
     {
-        // return true if model has media
+        if(!$this->medias->contains($media)){
+            throw MediaDoesNotAssignedToThisModel::check($media);
+        }
     }
 
-
-
-    public function getMediaFile($media)
+    /**
+     * @param mixed $media_ref
+     * @return Model|MorphMany|null
+     */
+    public function getMediaFile(mixed $media_ref): Model|MorphMany|null
     {
-        $media = $this->getStoredMedia($media);
+        $media = $this->getStoredMedia($media_ref);
 
-        //TODO has media ?
+        $this->hasMedia($media);
 
         return $this->morphMany(MediaFile::class, 'model')
             ->where('media_id', $media->id)
