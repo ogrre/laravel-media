@@ -11,7 +11,7 @@ class MediaDoesNotAssignedToThisModel extends InvalidArgumentException
      * @param Media $media
      * @return static
      */
-    public static function check(Media $media): static
+    public static function assigned(Media $media): static
     {
         return new static("$media->name is not assigned to this model");
     }

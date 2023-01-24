@@ -9,6 +9,7 @@ use Illuminate\Http\Testing\MimeType;
 use Illuminate\Support\Facades\Storage;
 use Ogrre\Media\Exceptions\MediaDoesNotExist;
 use Ogrre\Media\Exceptions\MediaDoesNotAssignedToThisModel;
+use Ogrre\Media\Exceptions\ModelAlreadyHasMediaFile;
 use Ogrre\Media\MediaRegistrar;
 use Ogrre\Media\Models\Media;
 use Ogrre\Media\Models\MediaFile;
@@ -17,13 +18,32 @@ trait HasMedia
 {
     private Media $mediaClass;
 
-    public function getMediaClass()
+    private function getMediaClass()
     {
         if (!isset($this->mediaClass)) {
             $this->mediaClass = app(MediaRegistrar::class)->getMediaClass();
         }
 
         return $this->mediaClass;
+    }
+
+    /**
+     * @param Media $media
+     * @return void
+     */
+    public function hasMedia(Media $media): void
+    {
+        if(!$this->medias->contains($media)){
+            throw MediaDoesNotAssignedToThisModel::assigned($media);
+        }
+    }
+
+    /**
+     * @return MorphToMany
+     */
+    public function medias(): MorphToMany
+    {
+        return $this->morphToMany(Media::class, 'model', 'model_has_medias');
     }
 
     /**
@@ -39,31 +59,6 @@ trait HasMedia
             });
 
         $this->medias()->syncWithoutDetaching($medias);
-    }
-
-    /**
-     * @param $file
-     * @param string|null $media_ref
-     * @return void
-     */
-    public function storeMediaFile($file, mixed $media_ref): void
-    {
-        $media = $this->getStoredMedia($media_ref);
-
-        $this->hasMedia($media);
-
-        //TODO check if mediafile exist
-
-        $path = Storage::disk($media->disk)->put($media->name, $file);
-
-        $media->checkMimeType(MimeType::from($path));
-
-        $this->media_files()->save(MediaFile::create([
-            'file_name' => $file->getClientOriginalName(),
-            'path' => Storage::url($path),
-            'size' => $file->getSize(),
-            'media_id' => $media->id
-        ]));
     }
 
     /**
@@ -90,14 +85,50 @@ trait HasMedia
     }
 
     /**
+     * @return MorphMany
+     */
+    private function mediaFiles(): MorphMany
+    {
+        return $this->morphMany(MediaFile::class, 'model');
+    }
+
+    /**
+     * @param $file
      * @param Media $media
      * @return void
      */
-    public function hasMedia(Media $media): void
+    private function storeMediaFile($file, Media $media): void
     {
-        if(!$this->medias->contains($media)){
-            throw MediaDoesNotAssignedToThisModel::check($media);
+        $path = Storage::disk($media->disk)->put($media->name, $file);
+
+        //TODO
+
+        $media->checkMimeType(MimeType::from($path));
+
+        $this->mediaFiles()->save(MediaFile::create([
+            'file_name' => $file->getClientOriginalName(),
+            'path' => Storage::url($path),
+            'size' => $file->getSize(),
+            'media_id' => $media->id
+        ]));
+    }
+
+    /**
+     * @param $file
+     * @param string|null $media_ref
+     * @return void
+     */
+    public function addMediaFile($file, mixed $media_ref): void
+    {
+        $media = $this->getStoredMedia($media_ref);
+
+        $this->hasMedia($media);
+
+        if($mediaFile = $this->getMediaFile($media)){
+            throw ModelAlreadyHasMediaFile::named($mediaFile->file_name);
         }
+
+        $this->storeMediaFile($file, $media);
     }
 
     /**
@@ -110,24 +141,21 @@ trait HasMedia
 
         $this->hasMedia($media);
 
-        return $this->morphMany(MediaFile::class, 'model')
+        return $this->mediaFiles()
             ->where('media_id', $media->id)
             ->first();
     }
 
     /**
-     * @return MorphToMany
+     * @param mixed $media
+     * @return void
      */
-    public function medias(): MorphToMany
+    public function deleteMediaFile(mixed $media): void
     {
-        return $this->morphToMany(Media::class, 'model', 'model_has_medias');
-    }
+        $mediaFile = $this->getMediaFile($media);
 
-    /**
-     * @return MorphMany
-     */
-    private function media_files(): MorphMany
-    {
-        return $this->morphMany(MediaFile::class, 'model');
+        Storage::delete($mediaFile->path);
+
+        $mediaFile->delete();
     }
 }

@@ -37,7 +37,7 @@ class Media extends Model
     /**
      * @return HasMany
      */
-    public function media_files(): HasMany
+    public function mediaFiles(): HasMany
     {
         return $this->hasMany(MediaFile::class);
     }
@@ -71,6 +71,10 @@ class Media extends Model
         return $media_type;
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     */
     public static function findById($id): mixed
     {
         $media_type = Media::find($id);
