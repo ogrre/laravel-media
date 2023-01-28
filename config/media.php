@@ -17,7 +17,7 @@ return [
 
     ],
 
-    'attributs' => [
+    'attributes' => [
 
         /*
          * name
@@ -35,6 +35,6 @@ return [
          * storage disk
         */
 
-        'disk' => 'local'
+        'disk' => 'public'
     ]
 ];

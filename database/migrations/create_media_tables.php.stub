@@ -36,8 +36,9 @@ return new class extends Migration
 
         Schema::create('media_files', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('file_name');
-            $table->string('path');
+            $table->string('name');
+            $table->string('storage');
+            $table->string('url');
             $table->bigInteger('size');
             $table->timestamps();
 

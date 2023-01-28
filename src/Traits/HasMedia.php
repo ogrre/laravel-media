@@ -94,27 +94,6 @@ trait HasMedia
 
     /**
      * @param $file
-     * @param Media $media
-     * @return void
-     */
-    private function storeMediaFile($file, Media $media): void
-    {
-        $path = Storage::disk($media->disk)->put($media->name, $file);
-
-        //TODO
-
-        $media->checkMimeType(MimeType::from($path));
-
-        $this->mediaFiles()->save(MediaFile::create([
-            'file_name' => $file->getClientOriginalName(),
-            'path' => Storage::url($path),
-            'size' => $file->getSize(),
-            'media_id' => $media->id
-        ]));
-    }
-
-    /**
-     * @param $file
      * @param string|null $media_ref
      * @return void
      */
@@ -147,14 +126,52 @@ trait HasMedia
     }
 
     /**
-     * @param mixed $media
+     * @param $file
+     * @param Media $media
      * @return void
      */
-    public function deleteMediaFile(mixed $media): void
+    private function storeMediaFile($file, Media $media): void
     {
+        $media->checkMimeType($file->getClientMimeType());
+
+        $upload_file = Storage::disk($media->disk)->put($media->name, $file);
+
+        $this->mediaFiles()->save(MediaFile::create([
+            'name' => $file->getClientOriginalName(),
+            'storage' => $upload_file,
+            'url' => Storage::url($upload_file),
+            'size' => $file->getSize(),
+            'media_id' => $media->id
+        ]));
+    }
+
+    /**
+     * @param $file
+     * @param mixed $media_ref
+     * @return void
+     */
+    public function updateMediaFile($file, mixed $media_ref): void
+    {
+        $media = $this->getStoredMedia($media_ref);
+
+        $media->checkMimeType($file->getClientMimeType());
+
+        $this->deleteMediaFile($media);
+
+        $this->storeMediaFile($file, $media);
+    }
+
+    /**
+     * @param mixed $media_ref
+     * @return void
+     */
+    public function deleteMediaFile(mixed $media_ref): void
+    {
+        $media = $this->getStoredMedia($media_ref);
+
         $mediaFile = $this->getMediaFile($media);
 
-        Storage::delete($mediaFile->path);
+        Storage::disk($media->disk)->delete($mediaFile->storage);
 
         $mediaFile->delete();
     }

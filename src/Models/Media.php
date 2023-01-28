@@ -5,8 +5,6 @@ namespace Ogrre\Media\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Http\Testing\MimeType;
 use Ogrre\Media\Exceptions\FileMimeTypeDoesNotMatch;
 use Ogrre\Media\Exceptions\MediaDoesNotExist;
 
@@ -48,9 +46,13 @@ class Media extends Model
      */
     public static function create(array $attributes = []): Model|Builder
     {
-        //TODO: exception error name not null
+        if(!is_array($attributes['mime_type'])){
+            $mime_types[0] = $attributes['mime_type'];
+        } else {
+            $mime_types = $attributes['mime_type'];
+        }
 
-        $attributes['mime_type'] = $attributes['mime_type'] ?? config('media.mime_type');
+        $attributes['mime_type'] = $mime_types ?? config('media.mime_type');
         $attributes['disk'] = $attributes['disk'] ?? config('media.disk');
 
         return static::query()->create($attributes);
@@ -92,7 +94,7 @@ class Media extends Model
      */
     public function checkMimeType($mime_type): void
     {
-        if(!collect($this->mime_type)->contains($mime_type)){
+        if(!collect($this->mime_type)->contains(explode("/", $mime_type)[1])){
             throw FileMimeTypeDoesNotMatch::match($this->name, $mime_type);
         }
     }
