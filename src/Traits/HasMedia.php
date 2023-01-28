@@ -5,7 +5,6 @@ namespace Ogrre\Media\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Http\Testing\MimeType;
 use Illuminate\Support\Facades\Storage;
 use Ogrre\Media\Exceptions\MediaDoesNotExist;
 use Ogrre\Media\Exceptions\MediaDoesNotAssignedToThisModel;
