@@ -24,6 +24,13 @@
     "config": {
         "sort-packages": true
     },
+        "extra": {
+        "laravel": {
+            "providers": [
+                "Ogrre\\Media\\MediaServiceProvider"
+            ]
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
