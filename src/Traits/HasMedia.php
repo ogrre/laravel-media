@@ -28,13 +28,11 @@ trait HasMedia
 
     /**
      * @param Media $media
-     * @return void
+     * @return bool
      */
-    public function hasMedia(Media $media): void
+    public function hasMedia(Media $media): bool
     {
-        if(!$this->medias->contains($media)){
-            throw MediaDoesNotAssignedToThisModel::assigned($media);
-        }
+        return !$this->medias->contains($media) ?? false;
     }
 
     /**
@@ -100,7 +98,7 @@ trait HasMedia
     {
         $media = $this->getStoredMedia($media_ref);
 
-        $this->hasMedia($media);
+        $this->hasMedia($media) ?? throw MediaDoesNotAssignedToThisModel::assigned($media);;
 
         if($mediaFile = $this->getMediaFile($media)){
             throw ModelAlreadyHasMediaFile::named($mediaFile->file_name);
@@ -117,7 +115,7 @@ trait HasMedia
     {
         $media = $this->getStoredMedia($media_ref);
 
-        $this->hasMedia($media);
+        $this->hasMedia($media) ?? throw MediaDoesNotAssignedToThisModel::assigned($media);
 
         return $this->mediaFiles()
             ->where('media_id', $media->id)
