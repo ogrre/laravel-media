@@ -107,7 +107,7 @@ $user->getMediaFile('avatar');
 
 *updateMediaFile* function will delete the previously saved file and save a new one to the media disk.
 ```
-$user->addMediaFile($file, $media);  
+$user->updateMediaFile($file, $media);  
 ```
 
 *deleteMediaFile* will delete the *Mediafile* associated to Model as well as file.
