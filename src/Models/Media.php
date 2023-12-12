@@ -52,8 +52,8 @@ class Media extends Model
             $mime_types = $attributes['mime_type'];
         }
 
-        $attributes['mime_type'] = $mime_types ?? config('media.mime_type');
-        $attributes['disk'] = $attributes['disk'] ?? config('media.disk');
+        $attributes['mime_type'] = $mime_types ?? config('media.attributes.mime_type');
+        $attributes['disk'] = $attributes['disk'] ?? config('medias.attributes.disk');
 
         return static::query()->create($attributes);
     }
