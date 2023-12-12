@@ -46,14 +46,16 @@ class Media extends Model
      */
     public static function create(array $attributes = []): Model|Builder
     {
-        if(!is_array($attributes['mime_type'])){
-            $mime_types[0] = $attributes['mime_type'];
-        } else {
-            $mime_types = $attributes['mime_type'];
+        if ($attributes['mime_type']) {
+            if (!is_array($attributes['mime_type'])) {
+                $mime_types[0] = $attributes['mime_type'];
+            } else {
+                $mime_types = $attributes['mime_type'];
+            }
         }
 
         $attributes['mime_type'] = $mime_types ?? config('media.attributes.mime_type');
-        $attributes['disk'] = $attributes['disk'] ?? config('medias.attributes.disk');
+        $attributes['disk'] = $attributes['disk'] ?? config('media.attributes.disk');
 
         return static::query()->create($attributes);
     }
@@ -66,7 +68,7 @@ class Media extends Model
     {
         $media_type = Media::where('name', $name)->first();
 
-        if (! $media_type) {
+        if (!$media_type) {
             throw MediaDoesNotExist::named($name);
         }
 
@@ -81,7 +83,7 @@ class Media extends Model
     {
         $media_type = Media::find($id);
 
-        if (! $media_type) {
+        if (!$media_type) {
             throw MediaDoesNotExist::withId($id);
         }
 
@@ -94,7 +96,7 @@ class Media extends Model
      */
     public function checkMimeType($mime_type): void
     {
-        if(!collect($this->mime_type)->contains(explode("/", $mime_type)[1])){
+        if (!collect($this->mime_type)->contains(explode("/", $mime_type)[1])) {
             throw FileMimeTypeDoesNotMatch::match($this->name, $mime_type);
         }
     }
