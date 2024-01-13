@@ -1,5 +1,10 @@
 # Laravel Media
 
+![Packagist Version](https://img.shields.io/packagist/v/ogrre/laravel-media)
+![GitHub License](https://img.shields.io/github/license/0grre/laravel-media)
+![Packagist Downloads](https://img.shields.io/packagist/dt/ogrre/laravel-media)
+
+
 ### Introduction
 This Laravel package allows you to associate media with models to be able to manage your files more easily.
 
@@ -114,6 +119,10 @@ $user->updateMediaFile($file, $media);
 ```
 $user->deleteMediaFile(1);  
 ```
-### Support me
+
+# Contributing
+Contributions are welcome and will be fully credited. I accept contributions via Pull Requests on Github.
+
+# Support me
 <a href="https://www.buymeacoffee.com/0grre" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
